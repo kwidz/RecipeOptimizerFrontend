@@ -1,21 +1,49 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
+  <div id="app" class="container-fluid">
+    <div class="row paramRow" >
+      <div class="col align-self-left" >
+        <div class="btnParam">
+          TBK
+            <i class="fa fa-cogs" style="font-weight:bold;color:black"></i>
+        </div>
+      </div>
+    </div>
+    <div class="row weekRow " >
+      <div class="col align-self-center" >
+      <span  >  
+      Semaine du <span  style="font-weight:bold;color:black"> {{beginDay}} </span> au <span  style="font-weight:bold;color:black">  {{endDay}} </span>  {{month}} {{year}} à <span style="font-weight:bold;color:red"> {{shop}} </span>
+      </span>
+      </div>
+    </div>
+    <div class="row dayRow">
+    <div class="col leftArrow arrow"></div>
+    <div class="col dayContainer divLundi">
+      <div class="row dayHeader">Lundi</div>
+      <div class="row"></div>
+    </div>
+    <div class="col dayContainer divMardi">
+      <div class="row dayHeader">Mardi</div>
+      <div class="row"></div>
+    </div>
+    <div class="col dayContainer divMercredi">
+      <div class="row dayHeader">Mercredi</div>
+      <div class="row"></div>    
+    </div>
+    <div class="col dayContainer divJeudi">
+      <div class="row dayHeader">Jeudi</div>
+      <div class="row"></div>
+    </div>
+    <div class="col dayContainer divVendredi">
+      <div class="row dayHeader">Vendredi</div>
+      <div class="row"></div>
+    </div>
+    <div class="col rightArrow arrow"></div>
+    </div>
+    <div class="row listContainer" >
+      <div class="col" >
+          listContainer
+      </div>
+    </div>
   </div>
 </template>
 
@@ -24,7 +52,11 @@ export default {
   name: 'app',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      beginDay: 10,
+      endDay: 17,
+      year: 2018,
+      month: 'Août',
+      shop: 'IGA'
     }
   }
 }
@@ -40,21 +72,50 @@ export default {
   margin-top: 60px;
 }
 
-h1, h2 {
-  font-weight: normal;
+.dayContainer {
+  background-color: white;
+  border: 2px solid #82C5E3;
+  margin: 15px;
+  width: 100px;
+  height: 150px;
+}
+.dayRow {
+  margin: 15px;
+  vertical-align: baseline;
+  -webkit-align-self: center; /* Safari 7.0+ */
+  align-self: center;
+}
+.arrow {
+  font-size: 40px;
+  color: grey;
+  font-weight: bold;
+  width: auto;
+  height: auto;
+  vertical-align: baseline;
+  -webkit-align-self: center; /* Safari 7.0+ */
+  align-self: center;
+}
+.arrow:hover {
+  cursor: pointer;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.leftArrow:after {
+  content: '<';
+}
+.rightArrow:after {
+  content: '>';
+}
+.dayHeader {
+  max-height: 30px;
+  color: black;
+  background-color: #82C5E3;
+  font-size: 20px;
+  text-align: center;
+}
+.listContainer {
+  background-color: #eef1f2;
+  margin: 15px;
+  height: 60vh
 }
 
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 </style>
