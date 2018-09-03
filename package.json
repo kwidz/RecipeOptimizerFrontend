@@ -1,0 +1,30 @@
+{
+  "name": "recipeoptimizerfrontend",
+  "version": "1.0.0",
+  "description": "Frontend for Recipe Optimization java REST API ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kwidz/RecipeOptimizerFrontend.git"
+  },
+  "keywords": [
+    "REST",
+    "FRONTEND",
+    "JS",
+    "WEB",
+    "VUEJS"
+  ],
+  "author": "Kwidz (Geoffrey Glangine)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/kwidz/RecipeOptimizerFrontend/issues"
+  },
+  "homepage": "https://github.com/kwidz/RecipeOptimizerFrontend#readme",
+  "dependencies": {
+    "bootstrap-vue": "^2.0.0-rc.11",
+    "jquery": "^3.3.1"
+  }
+}
