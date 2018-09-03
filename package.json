@@ -1,30 +1,31 @@
 {
-  "name": "recipeoptimizerfrontend",
+  "name": "recipe_optimizer_frontend",
+  "description": "A Vue.js project",
   "version": "1.0.0",
-  "description": "Frontend for Recipe Optimization java REST API ",
-  "main": "index.js",
+  "author": "Geoffrey Glangine <geoffrey.glangine@gmail.com>",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kwidz/RecipeOptimizerFrontend.git"
-  },
-  "keywords": [
-    "REST",
-    "FRONTEND",
-    "JS",
-    "WEB",
-    "VUEJS"
-  ],
-  "author": "Kwidz (Geoffrey Glangine)",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/kwidz/RecipeOptimizerFrontend/issues"
-  },
-  "homepage": "https://github.com/kwidz/RecipeOptimizerFrontend#readme",
   "dependencies": {
-    "bootstrap-vue": "^2.0.0-rc.11",
-    "jquery": "^3.3.1"
+    "vue": "^2.5.3",
+    "bootstrap": "^4.0.0-beta.2",
+    "bootstrap-vue": "^1.2.0",
+    "popper.js": "^1.12.9"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^6.0.0",
+    "babel-preset-env": "^1.6.1",
+    "cross-env": "^5.1.1",
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.5",
+    "style-loader": "^0.19.0",
+    "vue-loader": "^13.5.0",
+    "vue-template-compiler": "^2.5.3",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.4"
   }
 }
