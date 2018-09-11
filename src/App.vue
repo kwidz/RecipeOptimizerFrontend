@@ -87,20 +87,44 @@
         <div>
           <font-awesome-icon icon="utensils"/> Garde manger électronique :
           <multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect>
+           <div class="mt-4">
+            <table class="table table-bordered pagin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th width="220px">Action</th>
+                    </tr>
+                </thead>
+                <tbody sortable>
+                    <tr>
+                      <td>2 Tomates Savani</td>
+                      <td><a href="" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                    <tr>
+                      <td>1 kg de boeuf haché</td>
+                      <td><a href="" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                </tbody>
+            </table>
+           </div>
         </div>
       </div>
 
       <div class="col bottomPanel listeEpicerie">
-        <div>
+        <div class="row"> 
+          <div class="col-11">
         Liste d'épicerie hebdomadaire  :
-        <div class="row">  testt
-          tests
-          steste
-
-          testes
-
-          testtemplate
         </div>
+        <div class="col-1 btnPrint" >
+          <font-awesome-icon icon="print" />
+        </div>
+        </div>
+        <div class="row text-align-left">
+            <ul>
+              <li>Coffee</li>
+              <li>Tea</li>
+              <li>Milk</li>
+            </ul>
         </div>
       </div>
     </div>
@@ -248,9 +272,13 @@ export default {
   height: 60vh
 }
 .bottomPanel{
-  background-color: #282c34;
+  border: solid 1px #282c34;
+  border-radius: 5px;
   margin: 15px;
   margin-left: 0px
 }
-
+thead {
+  background-color: #82C5E3;
+}
+  
 </style>
