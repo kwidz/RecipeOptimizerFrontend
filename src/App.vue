@@ -1,65 +1,195 @@
 <template>
   <div id="app" class="container-fluid">
     <div class="row paramRow" >
-      <div class="col align-self-left" >
-        <div class="btnParam">
-          TBK
-            <i class="fa fa-cogs" style="font-weight:bold;color:black"></i>
+<div class="col-11"></div>
+      <div class="col align-self-right" >
+        <div class="btnParam" style="font-weight:bold;color:grey;font-size:30px;">
+          <font-awesome-icon icon="cogs" />
         </div>
       </div>
     </div>
     <div class="row weekRow " >
       <div class="col align-self-center" >
-      <span  >  
-      Semaine du <span  style="font-weight:bold;color:black"> {{beginDay}} </span> au <span  style="font-weight:bold;color:black">  {{endDay}} </span>  {{month}} {{year}} à <span style="font-weight:bold;color:red"> {{shop}} </span>
-      </span>
+        <span  >
+          Semaine du <span  style="font-weight:bold;color:black"> {{beginDay}} </span> au <span  style="font-weight:bold;color:black">  {{endDay}} </span>  {{month}} {{year}} à <span style="font-weight:bold;color:red"> {{shop}} </span>
+        </span>
+      </div>
+    </div>
+    <div class="d-flex justify-content-start SelectGroceryRow " >
+      <div>
+        <span>Épicerie Sélectionnée : </span>
+        <select v-model="shop" @change="fillWeek">
+          <option>IGA</option>
+          <option>METRO</option>
+        </select>
       </div>
     </div>
     <div class="row dayRow">
-    <div class="col leftArrow arrow"></div>
-    <div class="col dayContainer divLundi">
-      <div class="row dayHeader">Lundi</div>
-      <div class="row"></div>
+      <div class="col leftArrow arrow"></div>
+      <div class="col dayContainer divLundi">
+        <div class="row dayHeader"><div class="col align-self-center" >Lundi</div></div>
+        <div class="row RecipeName">
+          {{RecipeMondayName}}
+        </div>
+        <div class="row recipeURL">
+          <a :href="RecipeMondayURL">Cliquer ici pour voir la recette</a>
+        </div>
+      </div>
+      <div class="col dayContainer divMardi">
+        <div class="row dayHeader"><div class="col align-self-center" >Mardi</div></div>
+        <div class="row RecipeName">
+          {{RecipeTuesdayName}}
+        </div>
+        <div class="row recipeURL">
+          <a :href="RecipeTuesdayURL">Cliquer ici pour voir la recette</a>
+        </div>
+      </div>
+      <div class="col dayContainer divMercredi">
+        <div class="row dayHeader"><div class="col align-self-center" >Mercredi</div></div>
+        <div class="row RecipeName">
+          {{RecipeWednesdayName}}
+        </div>
+        <div class="row recipeURL">
+          <a :href="RecipeWednesdayURL">Cliquer ici pour voir la recette</a>
+        </div>
+      </div>
+      <div class="col dayContainer divJeudi">
+        <div class="row dayHeader"><div class="col align-self-center" >Jeudi</div></div>
+        <div class="row RecipeName">
+          {{RecipeThursdayName}}
+        </div>
+        <div class="row recipeURL">
+          <a :href="RecipeThursdayURL">Cliquer ici pour voir la recette</a>
+        </div>
+      </div>
+      <div class="col dayContainer divVendredi">
+        <div class="row dayHeader"><div class="col align-self-center" >Vendredi</div></div>
+        <div class="row RecipeName">
+          {{RecipeFridayName}}
+        </div>
+        <div class="row recipeURL">
+          <a :href="RecipeFridayURL">Cliquer ici pour voir la recette</a>
+        </div>
+      </div>
+      <div class="col rightArrow arrow"></div>
     </div>
-    <div class="col dayContainer divMardi">
-      <div class="row dayHeader">Mardi</div>
-      <div class="row"></div>
+
+    <div class="d-flex justify-content-end" >
+
+        <div class="price">
+          <span> Prix total pour la semaine: {{prix}}$</span>
+        </div>
+
     </div>
-    <div class="col dayContainer divMercredi">
-      <div class="row dayHeader">Mercredi</div>
-      <div class="row"></div>    
-    </div>
-    <div class="col dayContainer divJeudi">
-      <div class="row dayHeader">Jeudi</div>
-      <div class="row"></div>
-    </div>
-    <div class="col dayContainer divVendredi">
-      <div class="row dayHeader">Vendredi</div>
-      <div class="row"></div>
-    </div>
-    <div class="col rightArrow arrow"></div>
-    </div>
+
     <div class="row listContainer" >
-      <div class="col" >
-          listContainer
+      <div class="col bottomPanel GardeManger" style="marginLeft:15px">
+        <div>
+          <font-awesome-icon icon="utensils"/> Garde manger électronique :
+          <multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect>
+        </div>
+      </div>
+
+      <div class="col bottomPanel listeEpicerie">
+        <div>
+        Liste d'épicerie hebdomadaire  :
+        <div class="row">  testt
+          tests
+          steste
+
+          testes
+
+          testtemplate
+        </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+const axios = require('axios');
 export default {
   name: 'app',
   data () {
     return {
+      prix : 0,
       beginDay: 10,
-      endDay: 17,
+      endDay: 15,
       year: 2018,
-      month: 'Août',
-      shop: 'IGA'
+      month: 'Septembre',
+      shop: 'IGA',
+      RecipeMondayName:null,
+      RecipeMondayURL:null,
+      RecipeTuesdayName:null,
+      RecipeTuesdayURL:null,
+      RecipeWednesdayName:null,
+      RecipeWednesdayURL:null,
+      RecipeThursdayName:null,
+      RecipeThursdayURL:null,
+      RecipeFridayName:null,
+      RecipeFridayURL:null,
+      OptimizedPlan:null,
+      inputType:'',
+      allIngredients:['test1', 'test2', 'test3'],
+      allModifiers:['mod1', 'mod2', 'mod12']
     }
+  },
+  methods: {
+    ready () {
+      var vm = this
+      return axios.get('https://api-recipe.kwidz.fr/optimize').then(function(response) {
+        vm.OptimizedPlan=response.data
+        vm.fillWeek()
+      })
+    },
+    fillWeek(){
+      if(this.OptimizedPlan){
+        if(this.shop==='IGA'){
+          this.RecipeMondayName = this.OptimizedPlan.weekIGA.monday.name,
+          this.RecipeMondayURL = this.OptimizedPlan.weekIGA.monday.url,
+          this.RecipeTuesdayName = this.OptimizedPlan.weekIGA.tuesday.name,
+          this.RecipeTuesdayURL = this.OptimizedPlan.weekIGA.tuesday.url,
+          this.RecipeWednesdayName = this.OptimizedPlan.weekIGA.wednesday.name,
+          this.RecipeWednesdayURL = this.OptimizedPlan.weekIGA.wednesday.url,
+          this.RecipeThursdayName = this.OptimizedPlan.weekIGA.thursday.name,
+          this.RecipeThursdayURL = this.OptimizedPlan.weekIGA.thursday.url,
+          this.RecipeFridayName = this.OptimizedPlan.weekIGA.friday.name,
+          this.RecipeFridayURL = this.OptimizedPlan.weekIGA.friday.url,
+          this.prix=this.OptimizedPlan.prixIGA
+        }
+        if(this.shop==='METRO'){
+          this.RecipeMondayName = this.OptimizedPlan.weekMetro.monday.name,
+          this.RecipeMondayURL = this.OptimizedPlan.weekMetro.monday.url,
+          this.RecipeTuesdayName = this.OptimizedPlan.weekMetro.tuesday.name,
+          this.RecipeTuesdayURL = this.OptimizedPlan.weekMetro.tuesday.url,
+          this.RecipeWednesdayName = this.OptimizedPlan.weekMetro.wednesday.name,
+          this.RecipeWednesdayURL = this.OptimizedPlan.weekMetro.wednesday.url,
+          this.RecipeThursdayName = this.OptimizedPlan.weekMetro.thursday.name,
+          this.RecipeThursdayURL = this.OptimizedPlan.weekMetro.thursday.url,
+          this.RecipeFridayName = this.OptimizedPlan.weekMetro.friday.name,
+          this.RecipeFridayURL = this.OptimizedPlan.weekMetro.friday.url,
+          this.prix=this.OptimizedPlan.prixMetro
+        }
+      }
+    },
+
+    fillComponentList(){
+      var vm=this
+      return axios.get('https://api-recipe.kwidz.fr/getTypes').then(function(response){
+        vm.allIngredients=response.data.Ingredients
+      })
+    }
+  },
+
+  mounted (){
+    this.fillComponentList();
+    this.ready();
+
   }
+
 }
+
 </script>
 
 <style>
@@ -75,6 +205,7 @@ export default {
 .dayContainer {
   background-color: white;
   border: 2px solid #82C5E3;
+  text-align: center;
   margin: 15px;
   width: 100px;
   height: 150px;
@@ -113,9 +244,13 @@ export default {
   text-align: center;
 }
 .listContainer {
-  background-color: #eef1f2;
-  margin: 15px;
+
   height: 60vh
+}
+.bottomPanel{
+  background-color: #282c34;
+  margin: 15px;
+  margin-left: 0px
 }
 
 </style>
