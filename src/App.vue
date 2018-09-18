@@ -24,62 +24,20 @@
         </select>
       </div>
     </div>
-    <div class="row dayRow">
-      <div class="col leftArrow arrow"></div>
-      <div class="col dayContainer divLundi">
-        <div class="row dayHeader"><div class="col align-self-center" >Lundi</div></div>
-        <div class="row RecipeName">
-          {{RecipeMondayName}}
-        </div>
-        <div class="row recipeURL">
-          <a :href="RecipeMondayURL">Cliquer ici pour voir la recette</a>
-        </div>
+
+    <div class="row justify-content-center">
+      <div class="col-sm-2 col-xs-12" v-for="day in days">
+        <day :url='day ? day.url : null' :loaded='day != null'>
+          <span slot='day-header'>{{day ? day.name : null}}</span>
+          <div slot='day-content'>{{day ? day.recipe : null}}</div>
+        </day>
       </div>
-      <div class="col dayContainer divMardi">
-        <div class="row dayHeader"><div class="col align-self-center" >Mardi</div></div>
-        <div class="row RecipeName">
-          {{RecipeTuesdayName}}
-        </div>
-        <div class="row recipeURL">
-          <a :href="RecipeTuesdayURL">Cliquer ici pour voir la recette</a>
-        </div>
-      </div>
-      <div class="col dayContainer divMercredi">
-        <div class="row dayHeader"><div class="col align-self-center" >Mercredi</div></div>
-        <div class="row RecipeName">
-          {{RecipeWednesdayName}}
-        </div>
-        <div class="row recipeURL">
-          <a :href="RecipeWednesdayURL">Cliquer ici pour voir la recette</a>
-        </div>
-      </div>
-      <div class="col dayContainer divJeudi">
-        <div class="row dayHeader"><div class="col align-self-center" >Jeudi</div></div>
-        <div class="row RecipeName">
-          {{RecipeThursdayName}}
-        </div>
-        <div class="row recipeURL">
-          <a :href="RecipeThursdayURL">Cliquer ici pour voir la recette</a>
-        </div>
-      </div>
-      <div class="col dayContainer divVendredi">
-        <div class="row dayHeader"><div class="col align-self-center" >Vendredi</div></div>
-        <div class="row RecipeName">
-          {{RecipeFridayName}}
-        </div>
-        <div class="row recipeURL">
-          <a :href="RecipeFridayURL">Cliquer ici pour voir la recette</a>
-        </div>
-      </div>
-      <div class="col rightArrow arrow"></div>
     </div>
 
     <div class="d-flex justify-content-end" >
-
-        <div class="price">
-          <span> Prix total pour la semaine: {{prix}}$</span>
-        </div>
-
+      <div class="price">
+        <span> Prix total pour la semaine: {{prix}}$</span>
+      </div>
     </div>
 
     <div class="row listContainer" >
@@ -111,7 +69,7 @@
       </div>
 
       <div class="col bottomPanel listeEpicerie">
-        <div class="row"> 
+        <div class="row">
           <div class="col-11">
         Liste d'épicerie hebdomadaire  :
         </div>
@@ -132,9 +90,13 @@
 </template>
 
 <script>
+import day from './day.vue'
+
 const axios = require('axios');
+
 export default {
   name: 'app',
+  components: { day },
   data () {
     return {
       prix : 0,
@@ -143,16 +105,8 @@ export default {
       year: 2018,
       month: 'Septembre',
       shop: 'IGA',
-      RecipeMondayName:null,
-      RecipeMondayURL:null,
-      RecipeTuesdayName:null,
-      RecipeTuesdayURL:null,
-      RecipeWednesdayName:null,
-      RecipeWednesdayURL:null,
-      RecipeThursdayName:null,
-      RecipeThursdayURL:null,
-      RecipeFridayName:null,
-      RecipeFridayURL:null,
+      days: [null, null, null, null, null],
+      linkName:null,
       OptimizedPlan:null,
       inputType:'',
       allIngredients:['test1', 'test2', 'test3'],
@@ -163,39 +117,45 @@ export default {
     ready () {
       var vm = this
       return axios.get('https://api-recipe.kwidz.fr/optimize').then(function(response) {
-        vm.OptimizedPlan=response.data
+        vm.OptimizedPlan = response.data
         vm.fillWeek()
       })
     },
     fillWeek(){
-      if(this.OptimizedPlan){
-        if(this.shop==='IGA'){
-          this.RecipeMondayName = this.OptimizedPlan.weekIGA.monday.name,
-          this.RecipeMondayURL = this.OptimizedPlan.weekIGA.monday.url,
-          this.RecipeTuesdayName = this.OptimizedPlan.weekIGA.tuesday.name,
-          this.RecipeTuesdayURL = this.OptimizedPlan.weekIGA.tuesday.url,
-          this.RecipeWednesdayName = this.OptimizedPlan.weekIGA.wednesday.name,
-          this.RecipeWednesdayURL = this.OptimizedPlan.weekIGA.wednesday.url,
-          this.RecipeThursdayName = this.OptimizedPlan.weekIGA.thursday.name,
-          this.RecipeThursdayURL = this.OptimizedPlan.weekIGA.thursday.url,
-          this.RecipeFridayName = this.OptimizedPlan.weekIGA.friday.name,
-          this.RecipeFridayURL = this.OptimizedPlan.weekIGA.friday.url,
-          this.prix=this.OptimizedPlan.prixIGA
+      if (!this.OptimizedPlan) return
+
+      const shop = (this.shop === 'IGA') ? 'weekIGA' : 'weekMetro'
+
+      this.days = [
+        {
+          name: 'Lundi',
+          url: this.OptimizedPlan[shop].monday.url,
+          recipe: this.OptimizedPlan[shop].monday.name
+        },
+        {
+          name: 'Mardi',
+          url: this.OptimizedPlan[shop].tuesday.url,
+          recipe: this.OptimizedPlan[shop].tuesday.name
+        },
+        {
+          name: 'Mercredi',
+          url: this.OptimizedPlan[shop].wednesday.url,
+          recipe: this.OptimizedPlan[shop].wednesday.name
+        },
+        {
+          name: 'Jeudi',
+          url: this.OptimizedPlan[shop].thursday.url,
+          recipe: this.OptimizedPlan[shop].thursday.name
+        },
+        {
+          name: 'Vendredi',
+          url: this.OptimizedPlan[shop].friday.url,
+          recipe: this.OptimizedPlan[shop].friday.name
         }
-        if(this.shop==='METRO'){
-          this.RecipeMondayName = this.OptimizedPlan.weekMetro.monday.name,
-          this.RecipeMondayURL = this.OptimizedPlan.weekMetro.monday.url,
-          this.RecipeTuesdayName = this.OptimizedPlan.weekMetro.tuesday.name,
-          this.RecipeTuesdayURL = this.OptimizedPlan.weekMetro.tuesday.url,
-          this.RecipeWednesdayName = this.OptimizedPlan.weekMetro.wednesday.name,
-          this.RecipeWednesdayURL = this.OptimizedPlan.weekMetro.wednesday.url,
-          this.RecipeThursdayName = this.OptimizedPlan.weekMetro.thursday.name,
-          this.RecipeThursdayURL = this.OptimizedPlan.weekMetro.thursday.url,
-          this.RecipeFridayName = this.OptimizedPlan.weekMetro.friday.name,
-          this.RecipeFridayURL = this.OptimizedPlan.weekMetro.friday.url,
-          this.prix=this.OptimizedPlan.prixMetro
-        }
-      }
+      ]
+
+      this.prix = (this.shop === 'IGA') ? this.OptimizedPlan.prixIGA
+                                        : this.OptimizedPlan.prixMetro
     },
 
     fillComponentList(){
@@ -225,25 +185,11 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
-
-.dayContainer {
-  background-color: white;
-  border: 2px solid #82C5E3;
-  text-align: center;
-  margin: 15px;
-  width: 100px;
-  height: 150px;
-}
-.dayRow {
-  margin: 15px;
-  vertical-align: baseline;
-  -webkit-align-self: center; /* Safari 7.0+ */
-  align-self: center;
-}
 .arrow {
   font-size: 40px;
   color: grey;
   font-weight: bold;
+  line-height:150px;
   width: auto;
   height: auto;
   vertical-align: baseline;
@@ -257,28 +203,25 @@ export default {
 .leftArrow:after {
   content: '<';
 }
+
 .rightArrow:after {
   content: '>';
 }
-.dayHeader {
-  max-height: 30px;
-  color: black;
-  background-color: #82C5E3;
-  font-size: 20px;
-  text-align: center;
-}
-.listContainer {
 
+.listContainer {
   height: 60vh
 }
+
 .bottomPanel{
   border: solid 1px #282c34;
   border-radius: 5px;
   margin: 15px;
   margin-left: 0px
 }
+
+
 thead {
   background-color: #82C5E3;
 }
-  
+
 </style>
