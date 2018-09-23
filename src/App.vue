@@ -116,7 +116,7 @@ export default {
   methods: {
     ready () {
       var vm = this
-      return axios.get('https://api-recipe.kwidz.fr/optimize').then(function(response) {
+      return axios.post('https://api-recipe.kwidz.fr/optimize').then(function(response) {
         vm.OptimizedPlan = response.data
         vm.fillWeek()
       })
