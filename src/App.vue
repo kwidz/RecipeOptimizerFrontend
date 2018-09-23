@@ -26,7 +26,7 @@
     </div>
 
     <div class="row justify-content-center">
-      <div class="col-sm-2 col-xs-12" v-for="day in days">
+      <div class="col-sm-2 col-xs-12" v-for="day in days" :key="day.name">
         <day :url='day ? day.url : null' :loaded='day != null'>
           <span slot='day-header'>{{day ? day.name : null}}</span>
           <div slot='day-content'>{{day ? day.recipe : null}}</div>
@@ -44,26 +44,16 @@
       <div class="col bottomPanel GardeManger" style="marginLeft:15px">
         <div>
           <font-awesome-icon icon="utensils"/> Garde manger électronique :
-          <multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect>
+          <div class="row">
+          <div class="col-10"><multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect></div>
+          <div class="col-2"><b-button :variant="'success'" @click="addFridgeElmt">ADD</b-button></div>
+          </div>
            <div class="mt-4">
-            <table class="table table-bordered pagin-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th width="220px">Action</th>
-                    </tr>
-                </thead>
-                <tbody sortable>
-                    <tr>
-                      <td>2 Tomates Savani</td>
-                      <td><a href="" class="btn btn-danger">Delete</a></td>
-                    </tr>
-                    <tr>
-                      <td>1 kg de boeuf haché</td>
-                      <td><a href="" class="btn btn-danger">Delete</a></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="row text-align-left">
+                <div class="col">
+                  <div class="row" v-for="elmt in fridgeElmt" :key="elmt"><div class="col-1">{{elmt}}</div><div class="col"> <font-awesome-icon icon="trash" class="deleteElmt" @click="deleteFridgeElmt(elmt)"/></div></div>
+                </div>
+            </div>
            </div>
         </div>
       </div>
@@ -110,7 +100,8 @@ export default {
       OptimizedPlan:null,
       inputType:'',
       allIngredients:['test1', 'test2', 'test3'],
-      allModifiers:['mod1', 'mod2', 'mod12']
+      allModifiers:['mod1', 'mod2', 'mod12'],
+      fridgeElmt: []
     }
   },
   methods: {
@@ -120,6 +111,18 @@ export default {
         vm.OptimizedPlan = response.data
         vm.fillWeek()
       })
+    },
+    addFridgeElmt () {
+      if(this.inputType) {
+        this.fridgeElmt.push(this.inputType)
+      }
+      
+    },
+    deleteFridgeElmt (elmt) {
+      var index = this.fridgeElmt.indexOf(elmt);
+      if (index > -1) {
+        this.fridgeElmt.splice(index, 1);
+      }
     },
     fillWeek(){
       if (!this.OptimizedPlan) return
@@ -224,4 +227,7 @@ thead {
   background-color: #82C5E3;
 }
 
+.deleteElmt:hover {
+  cursor: pointer;
+}
 </style>
