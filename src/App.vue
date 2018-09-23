@@ -4,8 +4,17 @@
 <div class="col-11"></div>
       <div class="col align-self-right" >
         <div class="btnParam" style="font-weight:bold;color:grey;font-size:30px;">
-          <font-awesome-icon icon="cogs" />
+          <font-awesome-icon icon="cogs" v-b-modal.modalParam />
         </div>
+        <b-modal id="modalParam" title="Bootstrap-Vue">
+          <p class="my-4">Paramètrage de votre semaine</p>
+          <label>Choisissez le nombre de type de repas que vous souhaitez dans votre semaine</label>
+          <div class="row"><div class="col text-align-left">Poisson</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
+          <div class="row"><div class="col text-align-left">Boeuf</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
+          <div class="row"><div class="col text-align-left">Poulet</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
+          <div class="row"><div class="col text-align-left">Porc</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
+          <div class="row"><div class="col text-align-left">Végétarien</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
+        </b-modal>
       </div>
     </div>
     <div class="row weekRow " >
@@ -36,7 +45,7 @@
 
     <div class="d-flex justify-content-end" >
       <div class="price">
-        <span> Prix total pour la semaine: {{prix}}$</span>
+        <span> Prix total pour la semaine: <b>{{prix}}$</b></span>
       </div>
     </div>
 
@@ -46,12 +55,12 @@
           <font-awesome-icon icon="utensils"/> Garde manger électronique :
           <div class="row">
           <div class="col-10"><multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect></div>
-          <div class="col-2"><b-button :variant="'success'" @click="addFridgeElmt">ADD</b-button></div>
+          <div class="col-2"><b-button :variant="'success'" @click="addFridgeElmt">Ajouter</b-button></div>
           </div>
            <div class="mt-4">
             <div class="row text-align-left">
                 <div class="col">
-                  <div class="row" v-for="elmt in fridgeElmt" :key="elmt"><div class="col-1">{{elmt}}</div><div class="col"> <font-awesome-icon icon="trash" class="deleteElmt" @click="deleteFridgeElmt(elmt)"/></div></div>
+                  <div class="row" v-for="elmt in fridgeElmt" :key="elmt"><div class="col text-align-left">{{elmt}}</div><div class="col"> <font-awesome-icon icon="trash" class="deleteElmt" @click="deleteFridgeElmt(elmt)"/></div></div>
                 </div>
             </div>
            </div>
@@ -68,11 +77,9 @@
         </div>
         </div>
         <div class="row text-align-left">
-            <ul>
-              <li>Coffee</li>
-              <li>Tea</li>
-              <li>Milk</li>
-            </ul>
+          <div class="col">
+            <div class="row" v-for="elmt in toBuyList" :key="elmt"><div class="col text-align-left">{{elmt}}</div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -101,7 +108,8 @@ export default {
       inputType:'',
       allIngredients:['test1', 'test2', 'test3'],
       allModifiers:['mod1', 'mod2', 'mod12'],
-      fridgeElmt: []
+      fridgeElmt: [],
+      toBuyList: ['A REMPLIR', 'A REMPLIR']
     }
   },
   methods: {
@@ -227,7 +235,7 @@ thead {
   background-color: #82C5E3;
 }
 
-.deleteElmt:hover {
+.deleteElmt:hover, .btnParam:hover {
   cursor: pointer;
 }
 </style>

@@ -8,6 +8,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCogs } from '@fortawesome/free-solid-svg-icons'
 import { faPrint } from '@fortawesome/free-solid-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
 import { faUtensils } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Multiselect from 'vue-multiselect'
@@ -15,6 +16,7 @@ import Multiselect from 'vue-multiselect'
 library.add(faCogs)
 library.add(faPrint)
 library.add(faTrash)
+library.add(faArrowDown)
 library.add(faUtensils)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('multiselect', Multiselect)
