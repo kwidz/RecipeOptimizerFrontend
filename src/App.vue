@@ -1,10 +1,9 @@
 <template>
   <div id="app" class="container-fluid">
-    <div class="row paramRow" >
-<div class="col-11"></div>
-      <div class="col align-self-right" >
+    <div class="d-flex flex-row-reverse paramRow" >
+      <div class="p-2 align-self-right" >
         <div class="btnParam" style="font-weight:bold;color:grey;font-size:30px;">
-          <font-awesome-icon icon="cogs" v-b-modal.modalParam />
+          <b-button :variant="'normal'" v-b-modal.modalParam><font-awesome-icon icon="cogs"  /> Paramètres</b-button>
         </div>
         <b-modal id="modalParam" title="Bootstrap-Vue">
           <p class="my-4">Paramètrage de votre semaine</p>
