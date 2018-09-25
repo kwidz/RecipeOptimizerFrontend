@@ -58,8 +58,8 @@
         <div class="bottomPanel GardeManger">
           <font-awesome-icon icon="utensils"/> Garde manger électronique :
           <div class="row">
-            <div class="col-10"><multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect></div>
-            <div class="col-2"><b-button :variant="'success'" @click="addFridgeElmt">Ajouter</b-button></div>
+            <div class="col-md-10 col-sm-12 order-sm-1"><multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect></div>
+            <div class="col-md-2 col-sm-12 order-sm-2"><b-button :variant="'success'" @click="addFridgeElmt">Ajouter</b-button></div>
           </div>
           <div class="mt-4">
             <div class="row text-align-left">
