@@ -1,7 +1,12 @@
 <template>
   <div id="app" class="container-fluid">
-    <div class="d-flex flex-row-reverse paramRow" >
-      <div class="p-2 align-self-right" >
+    <div class="row weekRow" >
+      <div class="col-sm-12 col-md-8 offset-md-2 text-center order-12 order-sm-1">
+        Semaine du <span  style="font-weight:bold;color:black"> {{beginDay}} </span>
+        au <span  style="font-weight:bold;color:black">  {{endDay}} </span>
+        {{month}} {{year}} à <span style="font-weight:bold;color:red"> {{shop}} </span>
+      </div>
+      <div class="col-sm-12 col-md-2  order-1 order-sm-12 text-center">
         <div class="btnParam" style="font-weight:bold;color:grey;font-size:30px;">
           <b-button :variant="'normal'" v-b-modal.modalParam><font-awesome-icon icon="cogs"  /> Paramètres</b-button>
         </div>
@@ -14,13 +19,6 @@
           <div class="row"><div class="col text-align-left">Porc</div><div class="col"><input type="number" v-model="quantityPorc" min="0" max="5"  /></div></div>
           <div class="row"><div class="col text-align-left">Végétarien</div><div class="col"><input type="number" v-model="quantityVegan" min="0" max="5"/></div></div>
         </b-modal>
-      </div>
-    </div>
-    <div class="row weekRow " >
-      <div class="col align-self-center" >
-        <span  >
-          Semaine du <span  style="font-weight:bold;color:black"> {{beginDay}} </span> au <span  style="font-weight:bold;color:black">  {{endDay}} </span>  {{month}} {{year}} à <span style="font-weight:bold;color:red"> {{shop}} </span>
-        </span>
       </div>
     </div>
     <div class="d-flex justify-content-start SelectGroceryRow m-4" >
@@ -41,7 +39,7 @@
 
     <div class="row justify-content-center">
 
-      <div class="col-sm-2 col-xs-12" v-for="day in days" >
+      <div class="col-md-2 col-sm-12" v-for="day in days" >
         <day :url='day ? day.url : null' :loaded="loaded" :grocery=' day ? day.grocery : null' :dayName='day ? day.dayName : null'>
           <span slot='day-header'>{{day ? day.name : null}}</span>
           <div slot='day-content'>{{day ? day.recipe : null}}</div>
@@ -55,25 +53,26 @@
       </div>
     </div>
 
-    <div class="row listContainer" >
-      <div class="col bottomPanel GardeManger" style="marginLeft:15px">
-        <div>
+    <div class="row row-eq-height" >
+      <div class="col-md-6 col-sm-12">
+        <div class="bottomPanel GardeManger">
           <font-awesome-icon icon="utensils"/> Garde manger électronique :
           <div class="row">
-          <div class="col-10"><multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect></div>
-          <div class="col-2"><b-button :variant="'success'" @click="addFridgeElmt">Ajouter</b-button></div>
+            <div class="col-10"><multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect></div>
+            <div class="col-2"><b-button :variant="'success'" @click="addFridgeElmt">Ajouter</b-button></div>
           </div>
-           <div class="mt-4">
+          <div class="mt-4">
             <div class="row text-align-left">
                 <div class="col">
                   <div class="row" v-for="elmt in fridgeElmt" :key="elmt"><div class="col text-align-left">{{elmt}}</div><div class="col"> <font-awesome-icon icon="trash" class="deleteElmt" @click="deleteFridgeElmt(elmt)"/></div></div>
                 </div>
             </div>
-           </div>
-        </div>
+          </div>
+         </div>
       </div>
 
-      <div class="col bottomPanel listeEpicerie">
+      <div class="col-md-6 col-sm-12 ">
+        <div class="bottomPanel listeEpicerie">
         <div class="row">
           <div class="col-11">
         Liste d'épicerie hebdomadaire  :
@@ -87,6 +86,7 @@
             <div class="row" v-for="elmt in toBuyList" :key="elmt"><div class="col text-align-left">{{elmt}}</div></div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -104,8 +104,8 @@ export default {
     return {
       loaded :true,
       prix : 0,
-      beginDay: 10,
-      endDay: 15,
+      beginDay: 24,
+      endDay: 29,
       year: 2018,
       month: 'Septembre',
       shop: 'IGA',
@@ -325,15 +325,11 @@ export default {
   content: '>';
 }
 
-.listContainer {
-  height: 60vh
-}
-
 .bottomPanel{
   border: solid 1px #282c34;
   border-radius: 5px;
-  margin: 15px;
-  margin-left: 0px
+  padding:10px;
+  height:100%;
 }
 
 

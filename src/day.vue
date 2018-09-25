@@ -77,6 +77,7 @@ export default {
   font-size: 20px;
   line-height: 150px;
   vertical-align: middle;
+  padding:10px 5px;
 }
 
 .day .day-header {
