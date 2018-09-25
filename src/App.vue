@@ -5,14 +5,14 @@
         <div class="btnParam" style="font-weight:bold;color:grey;font-size:30px;">
           <b-button :variant="'normal'" v-b-modal.modalParam><font-awesome-icon icon="cogs"  /> Paramètres</b-button>
         </div>
-        <b-modal id="modalParam" title="Bootstrap-Vue">
+        <b-modal id="modalParam" title="Paramètres" ref="modal" @ok="setParam" >
           <p class="my-4">Paramètrage de votre semaine</p>
           <label>Choisissez le nombre de type de repas que vous souhaitez dans votre semaine</label>
-          <div class="row"><div class="col text-align-left">Poisson</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
-          <div class="row"><div class="col text-align-left">Boeuf</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
-          <div class="row"><div class="col text-align-left">Poulet</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
-          <div class="row"><div class="col text-align-left">Porc</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
-          <div class="row"><div class="col text-align-left">Végétarien</div><div class="col"><input type="number" name="quantity" min="0" max="5"></div></div>
+          <div class="row"><div class="col text-align-left">Poisson</div><div class="col"><input type="number" v-model="quantityPoisson" min="0" max="5" /></div></div>
+          <div class="row"><div class="col text-tomalign-left">Boeuf</div><div class="col"><input type="number" v-model="quantityBoeuf" min="0" max="5" /></div></div>
+          <div class="row"><div class="col text-align-left">Poulet</div><div class="col"><input type="number" v-model="quantityPoulet" min="0" max="5" /></div></div>
+          <div class="row"><div class="col text-align-left">Porc</div><div class="col"><input type="number" v-model="quantityPorc" min="0" max="5"  /></div></div>
+          <div class="row"><div class="col text-align-left">Végétarien</div><div class="col"><input type="number" v-model="quantityVegan" min="0" max="5"/></div></div>
         </b-modal>
       </div>
     </div>
@@ -23,19 +23,26 @@
         </span>
       </div>
     </div>
-    <div class="d-flex justify-content-start SelectGroceryRow " >
-      <div>
+    <div class="d-flex justify-content-start SelectGroceryRow m-4" >
+      <div class="col-12">
         <span>Épicerie Sélectionnée : </span>
-        <select v-model="shop" @change="fillWeek">
+        <select v-model="shop" @change="fillWeek" >
           <option>IGA</option>
           <option>METRO</option>
         </select>
       </div>
     </div>
 
+    <div class="row justify-content-center ">
+      <div class="col-10 m-4">
+          <b-button :variant="'success'" @click="optimize">Optimiser la liste des repas</b-button>
+      </div>
+    </div>
+
     <div class="row justify-content-center">
-      <div class="col-sm-2 col-xs-12" v-for="day in days" :key="day.name">
-        <day :url='day ? day.url : null' :loaded='day != null'>
+
+      <div class="col-sm-2 col-xs-12" v-for="day in days" >
+        <day :url='day ? day.url : null' :loaded="loaded" :grocery=' day ? day.grocery : null' :dayName='day ? day.dayName : null'>
           <span slot='day-header'>{{day ? day.name : null}}</span>
           <div slot='day-content'>{{day ? day.recipe : null}}</div>
         </day>
@@ -95,6 +102,7 @@ export default {
   components: { day },
   data () {
     return {
+      loaded :true,
       prix : 0,
       beginDay: 10,
       endDay: 15,
@@ -108,59 +116,158 @@ export default {
       allIngredients:['test1', 'test2', 'test3'],
       allModifiers:['mod1', 'mod2', 'mod12'],
       fridgeElmt: [],
-      toBuyList: ['A REMPLIR', 'A REMPLIR']
+      toBuyList: ['A REMPLIR', 'A REMPLIR2'],
+      quantityPoisson:1,
+      quantityBoeuf:1,
+      quantityPoulet:1,
+      quantityPorc:1,
+      quantityVegan:1
     }
   },
   methods: {
     ready () {
-      var vm = this
-      return axios.post('https://api-recipe.kwidz.fr/optimize').then(function(response) {
-        vm.OptimizedPlan = response.data
-        vm.fillWeek()
-      })
+      this.loaded=false
+      if(localStorage.types){
+      let types = JSON.parse(localStorage.types)
+      types.forEach(type=>{
+        this.fridgeElmt.push(type)
+        })
+      }
+      if(!localStorage.balance)
+        localStorage.balance=JSON.stringify([1,1,1,1,1])
+      if(!localStorage.types)
+        localStorage.types=JSON.stringify([])
+      if(!localStorage.recipes)
+          localStorage.recipes=JSON.stringify([])
+
+      this.quantityPoisson=localStorage.balance ? JSON.parse(localStorage.balance)[4] : 1
+      this.quantityBoeuf=localStorage.balance ? JSON.parse(localStorage.balance)[1] : 1
+      this.quantityPoulet=localStorage.balance ? JSON.parse(localStorage.balance)[3] : 1
+      this.quantityPorc=localStorage.balance ? JSON.parse(localStorage.balance)[2] : 1
+      this.quantityVegan=localStorage.balance ? JSON.parse(localStorage.balance)[0] : 1
+
+      if(!localStorage.OptimizedPlan){
+        console.log('searched');
+        return axios.post('https://api-recipe.kwidz.fr/optimize').then(response => {
+          this.OptimizedPlan = response.data
+          localStorage.OptimizedPlan = JSON.stringify(response.data)
+          this.fillWeek()
+          })
+      }
+      else {
+        console.log('stored');
+        this.OptimizedPlan=JSON.parse(localStorage.OptimizedPlan)
+        this.fillWeek()
+      }
+
+    },
+    optimize(){
+      console.log("optimization !")
+
+      /*
+        This request is composed of an array of forbiden recipes named recipes
+         containing the whole recipe json object
+        an array of types named types containing all types that the user added
+        and an array of int named balance wich is containing the number of each recipe type per week
+        order is Vegetarian, beef, pork, chiken and fish based recipes.
+      */
+      //first lets get the recipes
+      let recipes = JSON.parse(localStorage.recipes)
+      //get the get the Types
+      let types = JSON.parse(localStorage.types)
+      //finaly get the balance
+      let balance = JSON.parse(localStorage.balance)
+      let jsonObject={'recipes':recipes, 'types':types, 'balance':balance}
+      this.loaded=false
+      axios.post('https://api-recipe.kwidz.fr/optimize',(jsonObject)).then(response => {
+
+        this.OptimizedPlan = response.data
+        localStorage.OptimizedPlan = JSON.stringify(response.data)
+        this.fillWeek()
+        })
+
+
+    },
+    setParam (evt) {
+      // Prevent modal from closing
+      evt.preventDefault()
+      let sum=parseInt(this.quantityPoisson) + parseInt(this.quantityBoeuf) + parseInt(this.quantityPoulet) + parseInt(this.quantityPorc) + parseInt(this.quantityVegan)
+      console.log(sum)
+      if ( sum>5) {
+        alert('la somme des types doit être inférieure ou égale a 5\n'+this.quantityPoisson+"\n"+this.quantityBoeuf+"\n"+this.quantityPoulet+"\n"+this.quantityPorc+"\n"+this.quantityVegan+"\n")
+      } else {
+        localStorage.balance=JSON.stringify([this.quantityVegan, this.quantityBoeuf,this.quantityPorc,this.quantityPoulet,this.quantityPoisson,])
+        this.$refs.modal.hide()
+      }
     },
     addFridgeElmt () {
       if(this.inputType) {
         this.fridgeElmt.push(this.inputType)
+        if(!localStorage.types)
+        localStorage.types=JSON.stringify([])
+        let types = JSON.parse(localStorage.types)
+        types.push(this.inputType.toUpperCase())
+        localStorage.types = JSON.stringify(types)
       }
-      
+
     },
     deleteFridgeElmt (elmt) {
-      var index = this.fridgeElmt.indexOf(elmt);
+
+      var index = this.fridgeElmt.indexOf(elmt)
       if (index > -1) {
-        this.fridgeElmt.splice(index, 1);
+        this.fridgeElmt.splice(index, 1)
       }
+      if(!localStorage.types)
+        localStorage.types=JSON.stringify([])
+      let types = JSON.parse(localStorage.types)
+      index = types.indexOf(elmt.toUpperCase())
+      if (index > -1) {
+        types.splice(index, 1)
+      }
+      localStorage.types=JSON.stringify(types)
     },
     fillWeek(){
+      this.loaded=true
       if (!this.OptimizedPlan) return
 
-      const shop = (this.shop === 'IGA') ? 'weekIGA' : 'weekMetro'
-
+      let shop = (this.shop === 'IGA') ? 'weekIGA' : 'weekMetro'
+      console.log(shop)
       this.days = [
         {
+
           name: 'Lundi',
           url: this.OptimizedPlan[shop].monday.url,
-          recipe: this.OptimizedPlan[shop].monday.name
+          recipe: this.OptimizedPlan[shop].monday.name,
+          grocery: shop,
+          dayName:'monday'
         },
         {
           name: 'Mardi',
           url: this.OptimizedPlan[shop].tuesday.url,
-          recipe: this.OptimizedPlan[shop].tuesday.name
+          recipe: this.OptimizedPlan[shop].tuesday.name,
+          grocery: shop,
+          dayName:'tuesday'
         },
         {
           name: 'Mercredi',
           url: this.OptimizedPlan[shop].wednesday.url,
-          recipe: this.OptimizedPlan[shop].wednesday.name
+          recipe: this.OptimizedPlan[shop].wednesday.name,
+          grocery: shop,
+          dayName:'wednesday'
         },
         {
           name: 'Jeudi',
           url: this.OptimizedPlan[shop].thursday.url,
-          recipe: this.OptimizedPlan[shop].thursday.name
+          recipe: this.OptimizedPlan[shop].thursday.name,
+          grocery: shop,
+          dayName:'thursday'
         },
         {
           name: 'Vendredi',
           url: this.OptimizedPlan[shop].friday.url,
-          recipe: this.OptimizedPlan[shop].friday.name
+          recipe: this.OptimizedPlan[shop].friday.name,
+          grocery: shop,
+          dayName:'friday'
         }
       ]
 
@@ -177,8 +284,8 @@ export default {
   },
 
   mounted (){
-    this.fillComponentList();
-    this.ready();
+    this.fillComponentList()
+    this.ready()
 
   }
 

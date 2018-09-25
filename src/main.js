@@ -12,6 +12,8 @@ import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
 import { faUtensils } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Multiselect from 'vue-multiselect'
+import day from './day.vue'
+
 
 library.add(faCogs)
 library.add(faPrint)
