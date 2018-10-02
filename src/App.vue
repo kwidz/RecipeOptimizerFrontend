@@ -24,7 +24,7 @@
     <div class="d-flex justify-content-start SelectGroceryRow m-4" >
       <div class="col-12">
         <span>Épicerie Sélectionnée : </span>
-        <select v-model="shop" @change="fillWeek" >
+        <select v-model="shop" @change="selectChange()" >
           <option>IGA</option>
           <option>METRO</option>
         </select>
@@ -56,7 +56,7 @@
     <div class="row row-eq-height" >
       <div class="col-md-6 col-sm-12">
         <div class="bottomPanel GardeManger">
-          <font-awesome-icon icon="utensils"/> Garde manger électronique :
+          <h3 style="text-align:center"><font-awesome-icon icon="utensils"/> Liste d'ingrédients que je possède :</h3>
           <div class="row">
             <div class="col-md-10 col-sm-12 order-sm-1"><multiselect v-model="inputType" :options="allIngredients" :searchable="true"  :show-labels="false" placeholder="Choisir un ingrédient "></multiselect></div>
             <div class="col-md-2 col-sm-12 order-sm-2"><b-button :variant="'success'" @click="addFridgeElmt">Ajouter</b-button></div>
@@ -72,18 +72,23 @@
       </div>
 
       <div class="col-md-6 col-sm-12 ">
-        <div class="bottomPanel listeEpicerie">
+        <div class="bottomPanel " id="listeEpicerie">
         <div class="row">
           <div class="col-11">
-        Liste d'épicerie hebdomadaire  :
+        <h3 style="text-align:center">Liste d'épicerie hebdomadaire  :</h3>
         </div>
         <div class="col-1 btnPrint" >
-          <font-awesome-icon icon="print" />
+          <h3><font-awesome-icon class="no-print" icon="print" @click="print()" /></h3>
         </div>
         </div>
         <div class="row text-align-left">
           <div class="col">
-            <div class="row" v-for="elmt in toBuyList" :key="elmt"><div class="col text-align-left">{{elmt}}</div></div>
+            <div class="row" v-for="elmt in toBuyList" :key="">
+              <div class="col text-align-left">
+                <input type="checkbox" id="checkbox" v-if="elmt!==blankLine" >
+                {{elmt}}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -102,12 +107,13 @@ export default {
   components: { day },
   data () {
     return {
+      blankLine:"--------------------------------",
       loaded :true,
       prix : 0,
-      beginDay: 24,
-      endDay: 29,
+      beginDay: 1,
+      endDay: 5,
       year: 2018,
-      month: 'Septembre',
+      month: 'Octobre',
       shop: 'IGA',
       days: [null, null, null, null, null],
       linkName:null,
@@ -116,7 +122,7 @@ export default {
       allIngredients:['test1', 'test2', 'test3'],
       allModifiers:['mod1', 'mod2', 'mod12'],
       fridgeElmt: [],
-      toBuyList: ['A REMPLIR', 'A REMPLIR2'],
+      toBuyList: [],
       quantityPoisson:1,
       quantityBoeuf:1,
       quantityPoulet:1,
@@ -152,15 +158,34 @@ export default {
           this.OptimizedPlan = response.data
           localStorage.OptimizedPlan = JSON.stringify(response.data)
           this.fillWeek()
+          this.fillList()
           })
       }
       else {
         console.log('stored');
         this.OptimizedPlan=JSON.parse(localStorage.OptimizedPlan)
         this.fillWeek()
+        this.fillList()
       }
 
     },
+
+    print(){
+      var content = document.getElementById("listeEpicerie").innerHTML;
+    var mywindow = window.open('', 'Print', 'height=600,width=800');
+
+    mywindow.document.write('<html><head><title>Print</title> <style> .no-print{display: none !important;} </style>');
+    mywindow.document.write('</head><body >');
+    mywindow.document.write(content);
+    mywindow.document.write('</body></html>');
+
+    mywindow.document.close();
+    mywindow.focus()
+    mywindow.print();
+    mywindow.close();
+    return true;
+  },
+
     optimize(){
       console.log("optimization !")
 
@@ -188,6 +213,37 @@ export default {
 
 
     },
+
+    fillList(){
+      this.toBuyList=[]
+      if (!this.OptimizedPlan) return
+      let shop = (this.shop === 'IGA') ? 'weekIGA' : 'weekMetro'
+      let urls = []
+      urls.push(this.OptimizedPlan[shop].monday.url)
+      urls.push(this.OptimizedPlan[shop].tuesday.url)
+      urls.push(this.OptimizedPlan[shop].wednesday.url)
+      urls.push(this.OptimizedPlan[shop].thursday.url)
+      urls.push(this.OptimizedPlan[shop].friday.url)
+
+      axios.post('https://api-recipe.kwidz.fr/getList',(urls)).then(response => {
+        let test=[]
+        response.data.forEach(element=> {
+          if(element !== "Sel et poivre")
+          if(element==='\n')
+            this.toBuyList.push("--------------------------------")
+          else {
+            this.toBuyList.push(element)
+          }
+
+        })
+      })
+
+    },
+    selectChange(){
+      this.fillWeek()
+      this.fillList()
+    },
+
     setParam (evt) {
       // Prevent modal from closing
       evt.preventDefault()
@@ -339,5 +395,8 @@ thead {
 
 .deleteElmt:hover, .btnParam:hover {
   cursor: pointer;
+}
+#listeEpicerie{
+  text-align :left;
 }
 </style>
